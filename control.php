@@ -7,7 +7,6 @@ use Jumbojett\OpenIDConnectClient;
 
 
 
-
 class oidc extends control{
 
     public function index()
@@ -24,26 +23,34 @@ class oidc extends control{
         if( $_SERVER["HTTPS"])
                 $path="https://".$_SERVER["HTTP_HOST"];
         else
-            $path="http://".$_SERVER["HTTP_HOST"];
-        $oidc->setRedirectURL($path."/index.html?m=oidc&f=index");
+        $path="http://".$_SERVER["HTTP_HOST"];
+        // $oidc->setRedirectURL($path."/index.html?m=oidc&f=index");
+        $oidc->setRedirectURL($path."/zentao/index.html?m=oidc&f=index");
        
         try{
-           $oidc->addScope("profile");
-        $oidc->addScope("email");
-       // $token = $oidc->requestClientCredentialsToken()->access_token;
-        $oidc->authenticate();
+            $oidc->addScope("profile");
+            $oidc->addScope("email");
+            // $token = $oidc->requestClientCredentialsToken()->access_token;
+            $oidc->authenticate();
 
-        $user = $oidc->requestUserInfo();
-        }catch(Exception $e)
-         {
+            $user = $oidc->requestUserInfo();
+
+            //获得username，即account
+            $str_email = $oidc->requestUserInfo('email');
+            $email_arr = explode('@',$str_email);
+            $user->account = $email_arr[0];
+            //获得中文全名
+            $user->name = $oidc->requestUserInfo('family_name').$oidc->requestUserInfo('given_name');
+        }
+        catch(Exception $e){
             die("oidc error:".$e->getMessage());
         }
-       $this->view->name =$user->name;
-       $this->view->email=$user->email;
-       $this->view->sub=$user->sub;
+        $this->view->name =$user->name;
+        $this->view->email=$user->email;
+        $this->view->sub=$user->sub;
       
      
-        $dbuser = $this->oidc->getBindUser($user->name);
+        $dbuser = $this->oidc->getBindUser($user->account);
         if(!$dbuser)
         {
             $this->view->error="user not exist!";

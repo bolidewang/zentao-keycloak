@@ -89,11 +89,11 @@ class oidcModel extends model
      */
     public function createUser($newUser)
     {
-        $user = $this->dao->select('*')->from(TABLE_USER)->where('account')->eq($newUser->name)->fetch();
+        $user = $this->dao->select('*')->from(TABLE_USER)->where('account')->eq($newUser->account)->fetch();
         if($user) return array('status' => 'fail', 'data' => $this->lang->sso->bindHasAccount); 
 
         $user = new stdclass();
-        $user->account  = $newUser->name;
+        $user->account  = $newUser->account;
         $user->realname = $newUser->name;
         $user->email    = $newUser->email;
        
