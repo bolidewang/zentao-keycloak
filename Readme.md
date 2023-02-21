@@ -1,8 +1,11 @@
-本模块用于禅道与OpenId的SSO单点登录整合。
+本模块用于禅道开源版接入Keycloak系统，也适用于接入OpenId类（当然要自行修改）的SSO单点登录系统。
+
 使用方法：
     
 1. 将oidc整个目录拷贝到禅道的module模块中，作为禅道的一个模块使用。
-2. 配置oidc中的config.php
+
+2. 配置oidc中的config.php，填入issuer、clientId、clientSecret。
+ 
 3. 配置filter，由于禅道的框架会将url中的参数过滤不允许有空格存在。所以需要将以下代码放置到/config/my.php的最后。
 
         ```
